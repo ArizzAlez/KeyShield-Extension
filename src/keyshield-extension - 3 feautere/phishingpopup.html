@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>KeyShield & PhishShield</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      min-width: 320px;
+      padding: 12px;
+      background: #0b0f14;
+      color: #e6f7ff;
+    }
+    h1 {
+      font-size: 16px;
+      margin: 0 0 8px;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.4);
+    }
+    .section {
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 8px 0;
+    }
+    .btn {
+      background: #06f;
+      border: none;
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn.danger {
+      background: #e53935;
+    }
+    .status {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    label {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      background: #222;
+      border-radius: 26px;
+      cursor: pointer;
+    }
+    .knob {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      transition: all .18s;
+    }
+    .switch.on {
+      background: #07f;
+    }
+    .switch.on .knob {
+      left: 23px;
+    }
+    small {
+      display: block;
+      margin-top: 8px;
+      color: #bcd;
+      font-size: 12px;
+    }
+    .scan-results {
+      margin-top: 10px;
+      padding: 8px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 6px;
+      font-size: 13px;
+      min-height: 50px;
+      line-height: 1.3;
+    }
+    .muted {
+      color: #bcd;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+    .safe {
+      border-left: 4px solid #4caf50;
+    }
+    .suspicious {
+      border-left: 4px solid #f44336;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin: 10px 0;
+    }
+    h4 {
+      margin: 8px 0 6px 0;
+      font-size: 14px;
+    }
+
+    /* Add these styles to properly display the OWASP object structure */
+
+    .issue {
+      margin-bottom: 8px;
+      padding: 8px;
+      border-left: 3px solid #ff9800;
+      background: rgba(255,152,0,0.1);
+      border-radius: 4px;
+      color: #e6f7ff;
+    }
+
+    .issue strong {
+      color: #ff9800;
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .detail {
+      font-size: 12px;
+      color: #bcd;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .links {
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .links a {
+      color: #4fc3f7 !important;
+      text-decoration: none;
+      margin-right: 8px;
+    }
+
+    .links a:hover {
+      text-decoration: underline;
+    }
+
+    .ok {
+      color: #4caf50;
+      font-weight: 600;
+      padding: 8px;
+      border-left: 3px solid #4caf50;
+      background: rgba(76,175,80,0.1);
+      border-radius: 4px;
+    }
+
+    /* Severity colors for different issue types */
+    .issue.critical {
+      border-left-color: #f44336;
+      background: rgba(244,67,54,0.1);
+    }
+
+    .issue.critical strong {
+      color: #f44336;
+    }
+
+    .issue.high {
+      border-left-color: #ff9800;
+      background: rgba(255,152,0,0.1);
+    }
+
+    .issue.medium {
+      border-left-color: #ffeb3b;
+      background: rgba(255,235,59,0.1);
+    }
+
+    .issue.low {
+      border-left-color: #8bc34a;
+      background: rgba(139,195,74,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>KeyShield & PhishShield</h1>
+
+  <!-- Keystroke Obfuscation Section -->
+  <div class="section">
+    <div class="row">
+      <div>
+        <div class="status" id="siteLabel">Site: <strong id="host">loading...</strong></div>
+        <small id="hint">Obfuscation status for this site</small>
+      </div>
+      <div>
+        <div id="toggle" class="switch" role="switch" title="Toggle obfuscation">
+          <div class="knob"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="revertBtn" class="btn ghost">Reverse text (admin)</button>
+      <button id="openSettings" class="btn">Settings</button>
+    </div>
+
+    <div style="margin-top:10px;font-size:13px;color:#bcd">
+      <div><strong>Whitelist</strong>: when enabled, this site is excluded (no obfuscation)</div>
+    </div>
+  </div>
+
+  <!-- Phishing Detection Section -->
+  <div class="section">
+    <button id="checkBtn" class="btn">Check This Website</button>
+    <button id="reportBtn" class="btn danger">Report Website</button>
+
+    <div id="status" class="scan-results">Status: Not checked</div>
+
+    <hr>
+
+    <h4>OWASP Scan Results</h4>
+    <div id="owaspResults" class="scan-results">
+      <div class="muted">No scan run yet. Click <strong>Check This Website</strong> to run OWASP checks.</div>
+    </div>
+
+    <div class="muted" style="margin-top:10px;">Tip: Open console for more debug info (Inspect popup).</div>
+  </div>
+
+  <script src="popupp.js"></script>
+  <script src="phishpopup.js"></script>
+</body>
+</html>

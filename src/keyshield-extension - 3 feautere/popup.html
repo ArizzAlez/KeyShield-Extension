@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeyShield Login</title>
+  <style>
+    body {
+      background: radial-gradient(circle at center, #0a0f1f, #000);
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px #0ff);
+    }
+
+    h1 {
+      font-size: 2rem;
+      background: linear-gradient(90deg, #0ff, #00f);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 30px;
+      width: 320px;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+    }
+
+    .login-box label {
+      font-size: 1rem;
+      color: #ccc;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 15px;
+      border: none;
+      border-radius: 6px;
+      background: #111;
+      color: #0ff;
+      font-size: 1rem;
+      box-shadow: inset 0 0 8px #0ff;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #0ff, #00f);
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 1rem;
+    }
+
+    .login-box button:hover { opacity: 0.8; }
+
+    .status {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      text-align: center;
+      color: #f66;
+    }
+
+    #logout {
+      margin-top: 12px;
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #ff0066, #ff3366);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 0, 102, 0.6);
+      display: none;
+    }
+
+    /* Hide other forms initially */
+    #email-step, #otp-step, #enrollment-section { display: none; }
+
+    /* Enrollment specific styles */
+    #enrollment-section h3 {
+      text-align: center;
+      color: #0ff;
+      margin-bottom: 10px;
+    }
+
+    #enrollment-section p {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ccc;
+      margin-bottom: 20px;
+    }
+
+    .enrollment-step {
+      margin-bottom: 15px;
+    }
+
+    .progress-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+      gap: 10px;
+    }
+
+    .progress-step {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: bold;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .progress-step.active {
+      background: #0ff;
+      color: #000;
+      border-color: #0ff;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+
+    .progress-step.completed {
+      background: #00ff88;
+      color: #000;
+      border-color: #00ff88;
+    }
+
+    .progress-connector {
+      flex: 1;
+      height: 2px;
+      background: #333;
+      margin: 0 5px;
+    }
+
+    .progress-connector.active {
+      background: #0ff;
+      box-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+    }
+
+    #enrollBtn {
+      background: linear-gradient(90deg, #00ff88, #00cc66);
+      margin-bottom: 10px;
+    }
+
+    #skipEnrollBtn {
+      background: transparent;
+      border: 1px solid #666;
+      color: #ccc;
+    }
+
+    /* Alternative button styles */
+    .alt-button {
+      margin-top: 10px;
+      background: transparent;
+      border: 1px solid #0ff;
+      color: #0ff;
+    }
+
+    .alt-button:hover {
+      background: rgba(0, 255, 255, 0.1);
+    }
+
+    /* Enrollment instructions */
+    .enrollment-instructions {
+      background: rgba(0, 255, 255, 0.1);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #0ff;
+    }
+
+    .enrollment-instructions h4 {
+      color: #0ff;
+      margin: 0 0 10px 0;
+      font-size: 0.9rem;
+    }
+
+    .enrollment-instructions ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #ccc;
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+
+    .enrollment-instructions li {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="shield.png" alt="Shield Logo" class="logo-icon">
+    <h1>KeyShield</h1>
+  </div>
+
+  <!-- Session Info Message -->
+  <div style="text-align: center; margin-bottom: 15px; padding: 10px; background: rgba(0, 255, 255, 0.1); border-radius: 8px; border-left: 4px solid #0ff;">
+    <p style="margin: 0; color: #0ff; font-size: 0.9rem;">
+      🔒 <strong>Session Protection</strong><br>
+      Login once to browse securely
+    </p>
+  </div>
+
+  <div class="login-box">
+
+    <!-- ✅ Username/Password Login (Default) -->
+    <div id="password-login">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Enter username">
+
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter password">
+
+      <button id="loginBtn">Login</button>
+      <button id="emailLoginBtn" class="alt-button">Login with Email OTP</button>
+    </div>
+
+    <!-- ✅ Step 1: Enter Email -->
+    <div id="email-step">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="Enter your email">
+      <button id="sendOtpBtn">Send OTP</button>
+      <button id="backToPassword" class="alt-button">Back</button>
+    </div>
+
+    <!-- ✅ Step 2: Enter OTP -->
+    <div id="otp-step">
+      <label>Enter 6-digit OTP</label>
+      <input type="text" id="otp" placeholder="Enter OTP">
+      <button id="verifyOtpBtn">Verify OTP</button>
+      <button id="backToEmail" class="alt-button">Back</button>
+    </div>
+
+    <!-- ✅ Enhanced Enrollment Section -->
+    <div id="enrollment-section">
+      <h3>Enable Keystroke Protection</h3>
+      <p>Type your password 3 times to calibrate your typing pattern for enhanced security.</p>
+      
+      <div class="enrollment-instructions">
+        <h4>📝 Instructions:</h4>
+        <ul>
+          <li>Type your password naturally in each field</li>
+          <li>Focus on your normal typing rhythm</li>
+          <li>Complete all 3 steps for optimal protection</li>
+        </ul>
+      </div>
+      
+      <!-- Progress Indicator -->
+      <div class="progress-indicator">
+        <div class="progress-step active" id="step-1">1</div>
+        <div class="progress-connector"></div>
+        <div class="progress-step" id="step-2">2</div>
+        <div class="progress-connector"></div>
+        <div class="progress-step" id="step-3">3</div>
+      </div>
+      
+      <div id="enrollment-step-1" class="enrollment-step">
+        <label>Password (Step 1 of 3)</label>
+        <input type="password" id="enroll-password1" placeholder="Type your password naturally">
+      </div>
+      
+      <div id="enrollment-step-2" class="enrollment-step" style="display: none;">
+        <label>Password (Step 2 of 3)</label>
+        <input type="password" id="enroll-password2" placeholder="Type the same password again">
+      </div>
+      
+      <div id="enrollment-step-3" class="enrollment-step" style="display: none;">
+        <label>Password (Step 3 of 3)</label>
+        <input type="password" id="enroll-password3" placeholder="One final time for accuracy">
+      </div>
+      
+      <button id="enrollBtn" disabled>Complete Enrollment</button>
+      <button id="skipEnrollBtn">Skip for now</button>
+    </div>
+
+    <div class="status" id="status"></div>
+    <button id="logout">Logout</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "KeyShield",
+  "version": "1.2",
+  "description": "Browser security with keystroke authentication and phishing protection",
+  "action": {
+    "default_popup": "phishingpopup.html",
+    "default_title": "KeyShield Security"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "scripting",
+    "alarms",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "http://localhost:5000/*",
+    "http://127.0.0.1:5000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js",  
+        "contentScript.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "http://localhost:3000/*",
+        "http://127.0.0.1:3000/*"
+      ],
+      "js": [
+        "dashboardListener.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "popup.html",
+        "shield.png",
+        "dashboard.html",
+        "phishpopup.html"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}
