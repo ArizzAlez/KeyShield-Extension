@@ -345,7 +345,7 @@ sendOtpBtn.addEventListener("click", async () => {
 });
 
 // =============================
-// VERIFY OTP (Step 2) - FIXED VERSION
+// VERIFY OTP (Step 2) - CLEAN VERSION
 // =============================
 verifyOtpBtn.addEventListener("click", async () => {
   const email = document.getElementById("email").value;
@@ -359,20 +359,20 @@ verifyOtpBtn.addEventListener("click", async () => {
   try {
     statusMsg.textContent = "Verifying OTP...";
     
+    console.log("🔐 Verifying OTP for:", email);
+    
     const response = await fetch(`${API_URL}/api/verify-otp`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, otp })
+      body: JSON.stringify({ 
+        email: email, 
+        otp: otp
+        // NO keystroke data for OTP login
+      })
     });
 
-    // Check if response is JSON
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      const text = await response.text();
-      throw new Error(`Server error (Status: ${response.status})`);
-    }
-
     const data = await response.json();
+    console.log("✅ OTP Response:", data);
 
     if (data.success && data.token) {
       statusMsg.textContent = "✅ OTP Verified! Logged in.";
@@ -384,22 +384,16 @@ verifyOtpBtn.addEventListener("click", async () => {
         keyshield_jwt: data.token 
       });
       
-      // Notify background script about successful login
+      // Notify background script
       chrome.runtime.sendMessage({ type: "login-success" });
       
-      // Check if keystroke enrollment is needed
-      if (data.requires_enrollment) {
-        console.log("🎯 Keystroke Dynamics: Enrollment required after OTP login");
-        showKeystrokeEnrollment(data.token);
-      } else {
-        safeClosePopup(500);
-      }
+      safeClosePopup(500);
     } else {
-      statusMsg.textContent = `❌ ${data.message || "Incorrect or expired OTP"}`;
+      statusMsg.textContent = `❌ ${data.message || "OTP verification failed"}`;
     }
   } catch (error) {
-    console.error("Verify OTP error:", error);
-    statusMsg.textContent = `❌ ${error.message || "Connection failed"}`;
+    console.error("❌ OTP verification error:", error);
+    statusMsg.textContent = `❌ Connection failed. Please try again.`;
   }
 });
 
